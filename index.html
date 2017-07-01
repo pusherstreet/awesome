@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sortList">
+       
+            <a id="shift" href="#">Shift</a>
+            <a id="bubble" href="#">BubbleSort</a>
+            <a id="insert" href="#">InsertionSort</a>
+       
+    </div>
+    <canvas height="500" width="1201" id="canvas">
+
+    </canvas>
+    <script>
+        // intialize
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+        var arr = generateArray(200);
+
+        function generateArray (n) {
+            let arr = [];
+            while (n > 0) {
+                arr.push(Math.ceil(Math.random() * canvas.height));
+                n--;
+            }
+            return arr;
+        }
+
+        // handlers
+        document.getElementById('shift').onclick = function(e){
+            e.preventDefault();
+            arr = generateArray(200)
+            draw(arr);
+        }
+
+        document.getElementById('bubble').onclick = function(e){
+            e.preventDefault();
+            bubbleSort(arr);
+        }
+        document.getElementById('insert').onclick = function(e){
+            e.preventDefault();
+            insertionSort(arr);
+        }
+
+        // start
+        draw(arr);
+
+        // drawing functions
+
+        function updateRect(pos, value) {
+            setTimeout(function () {
+                context.clearRect(pos * 6, canvas.height, 5, -canvas.height); // clear old rectangle
+                context.fillRect(                                  // fill new rectangle
+                    pos * 6,
+                    canvas.height,
+                    5,
+                    -value
+                );
+            }, 0.5);
+        }
+
+         function draw(array) {
+            context.clearRect(0, 0, canvas.width, canvas.height)
+            array.forEach(function (el, key) {
+                context.fillRect(
+                    key * 6,
+                    canvas.height,
+                    5,
+                    -el
+                );
+            });
+        }
+
+
+        // sorting algorithms
+
+        function insertionSort(unsortedList) {
+            var len = unsortedList.length;
+            for (var i = 1; i < len; i++) {
+                var tmp = unsortedList[i];
+
+                for (var j = i - 1; j >= 0 && (unsortedList[j] > tmp); j--) {
+                    //Shift the number
+                    unsortedList[j + 1] = unsortedList[j];
+                    updateRect(j + 1, unsortedList[j])
+                }
+
+                unsortedList[j + 1] = tmp;
+                updateRect(j + 1, tmp)
+            }
+        }
+
+        function bubbleSort(unsortedList) {
+            var swapped;
+            do {
+                swapped = false;
+                for (var i = 0; i < unsortedList.length - 1; i++) {
+                    if (unsortedList[i] > unsortedList[i + 1]) {
+                        var temp = unsortedList[i];
+                        unsortedList[i] = unsortedList[i + 1];
+                        updateRect(i, unsortedList[i]);
+                        unsortedList[i + 1] = temp;
+                        updateRect(i + 1, temp);
+                        swapped = true;
+
+                    }
+                }
+            } while (swapped);
+        }
+
+    </script>
+</body>
+
+</html>
