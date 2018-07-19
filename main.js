@@ -2,6 +2,7 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var arr = generateArray(200);
+var drawWorkers = [];
 
 function generateArray(n) {
     let arr = [];
@@ -15,20 +16,24 @@ function generateArray(n) {
 // handlers
 document.getElementById('shift').onclick = function (e) {
     e.preventDefault();
+    stopDraw();
     arr = generateArray(200)
     draw(arr);
 }
 
 document.getElementById('bubble').onclick = function (e) {
     e.preventDefault();
+    stopDraw();
     bubbleSort(arr);
 }
 document.getElementById('insert').onclick = function (e) {
     e.preventDefault();
+    stopDraw();
     insertionSort(arr);
 }
 document.getElementById('merge').onclick = function (e) {
     e.preventDefault();
+    stopDraw();
     mergeSort(arr);
 }
 
@@ -38,7 +43,8 @@ draw(arr);
 // drawing functions
 
 function updateRect(pos, value) {
-    setTimeout(function () {
+    let workerPos = drawWorkers.length;
+    drawWorkers.push(setTimeout(function () {
         sleep(1);
         context.clearRect(pos * 6, canvas.height, 5, -canvas.height); // clear old rectangle
         context.fillRect(                                  // fill new rectangle
@@ -47,7 +53,8 @@ function updateRect(pos, value) {
             5,
             -value
         );
-    }, 0.01);
+        drawWorkers.slice(workerPos, 1);
+    }, 0.01));
 }
 
 function draw(array) {
@@ -153,6 +160,12 @@ function breadcrumbs(pos, arr){
         pos++;
     }
     return pos;
+}
+
+function stopDraw(){
+    drawWorkers.forEach(function(timeoutID){
+        clearTimeout(timeoutID);
+    });
 }
 
 function sleep(ms) 
