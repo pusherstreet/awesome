@@ -3,6 +3,7 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var arr = generateArray(200);
 var drawWorkers = [];
+var delay = 0;
 
 function generateArray(n) {
     let arr = [];
@@ -17,24 +18,34 @@ function generateArray(n) {
 document.getElementById('shift').onclick = function (e) {
     e.preventDefault();
     stopDraw();
-    arr = generateArray(200)
+    arr = generateArray(200);
     draw(arr);
 }
 
 document.getElementById('bubble').onclick = function (e) {
     e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
     stopDraw();
     bubbleSort(arr);
 }
 document.getElementById('insert').onclick = function (e) {
     e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
     stopDraw();
     insertionSort(arr);
 }
 document.getElementById('merge').onclick = function (e) {
     e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
     stopDraw();
     mergeSort(arr);
+}
+
+document.getElementById('quick').onclick = function(e){
+    e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
+    stopDraw();
+    console.log(quickSort(arr));
 }
 
 // start
@@ -45,7 +56,7 @@ draw(arr);
 function updateRect(pos, value) {
     let workerPos = drawWorkers.length;
     drawWorkers.push(setTimeout(function () {
-        sleep(1);
+        sleep(delay);
         context.clearRect(pos * 6, canvas.height, 5, -canvas.height); // clear old rectangle
         context.fillRect(                                  // fill new rectangle
             pos * 6,
@@ -160,6 +171,39 @@ function breadcrumbs(pos, arr){
         pos++;
     }
     return pos;
+}
+
+
+function quickSort(origArray, start = 0) {
+	if (origArray.length <= 1) {
+        if(origArray.length){
+            updateRect(start, origArray[0]);
+        }
+		return origArray;
+	} else {
+
+		var left = [];
+		var right = [];
+        var newArray = [];
+		var pivot = origArray.pop();
+		var length = origArray.length;
+
+		for (var i = 0; i < length; i++) {
+			if (origArray[i] <= pivot) {
+                left.push(origArray[i]);
+			} else {
+                right.push(origArray[i]);
+            }
+        }
+        
+        [].concat(left, pivot, right).forEach(function(el, index){
+            updateRect(start + index, el);
+        });
+
+        let leftLn = left.length;
+
+        return newArray.concat(quickSort(left, start), pivot, quickSort(right, start + leftLn + 1));
+	}
 }
 
 function stopDraw(){
