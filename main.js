@@ -45,7 +45,14 @@ document.getElementById('quick').onclick = function(e){
     e.preventDefault();
     delay = parseInt(e.target.dataset.delay);
     stopDraw();
-    console.log(quickSort(arr));
+    quickSort(arr);
+}
+
+document.getElementById('quickRnd').onclick = function(e){
+    e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
+    stopDraw();
+    quickSortRnd(arr);
 }
 
 // start
@@ -186,6 +193,38 @@ function quickSort(origArray, start = 0) {
 		var right = [];
         var newArray = [];
 		var pivot = origArray.pop();
+		var length = origArray.length;
+
+		for (var i = 0; i < length; i++) {
+			if (origArray[i] <= pivot) {
+                left.push(origArray[i]);
+			} else {
+                right.push(origArray[i]);
+            }
+        }
+        
+        [].concat(left, pivot, right).forEach(function(el, index){
+            updateRect(start + index, el);
+        });
+
+        let leftLn = left.length;
+
+        return newArray.concat(quickSort(left, start), pivot, quickSort(right, start + leftLn + 1));
+	}
+}
+
+function quickSortRnd(origArray, start = 0) {
+	if (origArray.length <= 1) {
+        if(origArray.length){
+            updateRect(start, origArray[0]);
+        }
+		return origArray;
+	} else {
+
+		var left = [];
+		var right = [];
+        var newArray = [];
+		var pivot = origArray.splice(Math.floor(Math.random()*origArray.length) ,1)[0];
 		var length = origArray.length;
 
 		for (var i = 0; i < length; i++) {
