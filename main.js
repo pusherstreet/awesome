@@ -41,18 +41,25 @@ document.getElementById('merge').onclick = function (e) {
     mergeSort(arr);
 }
 
-document.getElementById('quick').onclick = function(e){
+document.getElementById('quick').onclick = function (e) {
     e.preventDefault();
     delay = parseInt(e.target.dataset.delay);
     stopDraw();
     quickSort(arr);
 }
 
-document.getElementById('quickRnd').onclick = function(e){
+document.getElementById('quickRnd').onclick = function (e) {
     e.preventDefault();
     delay = parseInt(e.target.dataset.delay);
     stopDraw();
     quickSortRnd(arr);
+}
+
+document.getElementById('cocktail').onclick = function (e) {
+    e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
+    stopDraw();
+    cocktailSort(arr);
 }
 
 // start
@@ -136,7 +143,7 @@ function mergeSort(arr, start = 0) {
 
     return merge(
         mergeSort(left, start),
-        mergeSort(right, start + middle ),
+        mergeSort(right, start + middle),
         start
     )
 }
@@ -158,21 +165,21 @@ function merge(left, right, pos) {
         }
         pos++;
     }
-    
+
     left = left.slice(indexLeft);
-    if(left.length)
+    if (left.length)
         pos = breadcrumbs(pos, left);
 
     right = right.slice(indexRight);
-    if(right.length)
+    if (right.length)
         pos = breadcrumbs(pos, right);
 
     return result.concat(left).concat(right);
 }
 
-function breadcrumbs(pos, arr){
+function breadcrumbs(pos, arr) {
     let index = 0;
-    while(index < arr.length){
+    while (index < arr.length) {
         updateRect(pos, arr[index]);
         index++;
         pos++;
@@ -182,77 +189,130 @@ function breadcrumbs(pos, arr){
 
 
 function quickSort(origArray, start = 0) {
-	if (origArray.length <= 1) {
-        if(origArray.length){
+    if (origArray.length <= 1) {
+        if (origArray.length) {
             updateRect(start, origArray[0]);
         }
-		return origArray;
-	} else {
+        return origArray;
+    } else {
 
-		var left = [];
-		var right = [];
+        var left = [];
+        var right = [];
         var newArray = [];
-		var pivot = origArray.pop();
-		var length = origArray.length;
+        var pivot = origArray.pop();
+        var length = origArray.length;
 
-		for (var i = 0; i < length; i++) {
-			if (origArray[i] <= pivot) {
+        for (var i = 0; i < length; i++) {
+            if (origArray[i] <= pivot) {
                 left.push(origArray[i]);
-			} else {
+            } else {
                 right.push(origArray[i]);
             }
         }
-        
-        [].concat(left, pivot, right).forEach(function(el, index){
+
+        [].concat(left, pivot, right).forEach(function (el, index) {
             updateRect(start + index, el);
         });
 
         let leftLn = left.length;
 
         return newArray.concat(quickSort(left, start), pivot, quickSort(right, start + leftLn + 1));
-	}
+    }
 }
 
 function quickSortRnd(origArray, start = 0) {
-	if (origArray.length <= 1) {
-        if(origArray.length){
+    if (origArray.length <= 1) {
+        if (origArray.length) {
             updateRect(start, origArray[0]);
         }
-		return origArray;
-	} else {
+        return origArray;
+    } else {
 
-		var left = [];
-		var right = [];
+        var left = [];
+        var right = [];
         var newArray = [];
-		var pivot = origArray.splice(Math.floor(Math.random()*origArray.length) ,1)[0];
-		var length = origArray.length;
+        var pivot = origArray.splice(Math.floor(Math.random() * origArray.length), 1)[0];
+        var length = origArray.length;
 
-		for (var i = 0; i < length; i++) {
-			if (origArray[i] <= pivot) {
+        for (var i = 0; i < length; i++) {
+            if (origArray[i] <= pivot) {
                 left.push(origArray[i]);
-			} else {
+            } else {
                 right.push(origArray[i]);
             }
         }
-        
-        [].concat(left, pivot, right).forEach(function(el, index){
+
+        [].concat(left, pivot, right).forEach(function (el, index) {
             updateRect(start + index, el);
         });
 
         let leftLn = left.length;
 
         return newArray.concat(quickSort(left, start), pivot, quickSort(right, start + leftLn + 1));
-	}
+    }
 }
 
-function stopDraw(){
-    drawWorkers.forEach(function(timeoutID){
-        clearTimeout(timeoutID);
-    });
+
+function cocktailSort(arr) {
+    let swapped = true;
+    let start = 0;
+    let end = arr.length;
+
+    while (swapped == true) {
+        swapped = false;
+
+        // loop from bottom to top same as
+        // the bubble sort
+        for (let i = start; i < end - 1; ++i) {
+            if (arr[i] > arr[i + 1]) {
+                let temp = arr[i];
+                arr[i] = arr[i + 1];
+                updateRect(i, arr[i + 1]);
+                arr[i + 1] = temp;
+                updateRect(i + 1, temp);
+                swapped = true;
+            }
+        }
+
+        // if nothing moved, then array is sorted.
+        if (swapped == false)
+            break;
+
+        // otherwise, reset the swapped flag so that it
+        // can be used in the next stage
+        swapped = false;
+
+        // move the end point back by one, because
+        // item at the end is in its rightful spot
+        end = end - 1;
+
+        // from top to bottom, doing the
+        // same comparison as in the previous stage
+        for (let i = end - 1; i >= start; i--) {
+            if (arr[i] > arr[i + 1]) {
+                let temp = arr[i];
+                arr[i] = arr[i + 1];
+                updateRect(i, arr[i + 1]);
+                arr[i + 1] = temp;
+                updateRect(i + 1, temp);
+                swapped = true;
+            }
+        }
+
+        // increase the starting point, because
+        // the last stage would have moved the next
+        // smallest number to its rightful spot.
+        start = start + 1;
+    }
 }
 
-function sleep(ms) 
-{
-  var e = new Date().getTime() + (ms);
-  while (new Date().getTime() <= e) {}
-}
+    function stopDraw() {
+        drawWorkers.forEach(function (timeoutID) {
+            clearTimeout(timeoutID);
+        });
+    }
+
+    function sleep(ms) {
+        var e = new Date().getTime() + (ms);
+        while (new Date().getTime() <= e) { }
+    }
