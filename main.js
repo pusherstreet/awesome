@@ -62,6 +62,13 @@ document.getElementById('cocktail').onclick = function (e) {
     cocktailSort(arr);
 }
 
+document.getElementById('shell').onclick = function (e) {
+    e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
+    stopDraw();
+    shellSort(arr);
+}
+
 // start
 draw(arr);
 
@@ -306,13 +313,39 @@ function cocktailSort(arr) {
     }
 }
 
-    function stopDraw() {
-        drawWorkers.forEach(function (timeoutID) {
-            clearTimeout(timeoutID);
-        });
-    }
+function shellSort(arr) {
+    var increment = arr.length / 2;
+    while (increment > 0) {
+        for (i = increment; i < arr.length; i++) {
+            var j = i;
+            var temp = arr[i];
 
-    function sleep(ms) {
-        var e = new Date().getTime() + (ms);
-        while (new Date().getTime() <= e) { }
+            while (j >= increment && arr[j - increment] > temp) {
+                arr[j] = arr[j - increment];
+                updateRect(j, arr[j-increment]);
+                j = j - increment;
+            }
+
+            arr[j] = temp;
+            updateRect(j, temp);
+        }
+
+        if (increment == 2) {
+            increment = 1;
+        } else {
+            increment = parseInt(increment * 5 / 11);
+        }
     }
+    return arr;
+}
+
+function stopDraw() {
+    drawWorkers.forEach(function (timeoutID) {
+        clearTimeout(timeoutID);
+    });
+}
+
+function sleep(ms) {
+    var e = new Date().getTime() + (ms);
+    while (new Date().getTime() <= e) { }
+}
