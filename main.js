@@ -69,6 +69,13 @@ document.getElementById('shell').onclick = function (e) {
     shellSort(arr);
 }
 
+document.getElementById('selection').onclick = function (e) {
+    e.preventDefault();
+    delay = parseInt(e.target.dataset.delay);
+    stopDraw();
+    selectionSort(arr);
+}
+
 // start
 draw(arr);
 
@@ -337,6 +344,40 @@ function shellSort(arr) {
         }
     }
     return arr;
+}
+
+function selectionSort(items){
+
+    var len = items.length,
+        min;
+
+    for (i=0; i < len; i++){
+
+        //set minimum to this position
+        min = i;
+
+        //check the rest of the array to see if anything is smaller
+        for (j=i+1; j < len; j++){
+            if (items[j] < items[min]){
+                min = j;
+            }
+        }
+
+        //if the minimum isn't in the position, swap it
+        if (i != min){
+            swap(items, i, min);
+        }
+    }
+
+    return items;
+}
+
+function swap(items, firstIndex, secondIndex){
+    var temp = items[firstIndex];
+    items[firstIndex] = items[secondIndex];
+    updateRect(firstIndex, items[secondIndex]);
+    items[secondIndex] = temp;
+    updateRect(secondIndex, temp);
 }
 
 function stopDraw() {
